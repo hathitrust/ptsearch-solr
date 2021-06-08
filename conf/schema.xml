@@ -1,1 +1,196 @@
-no_hid_schema.xml
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="no_hid_schema based on 3.3 schema solr8" version="2.0">
+    <!-- attribute "name" is the name of this schema and is only used for display purposes.
+         Applications should change this to reflect the nature of the search collection.
+         version="1.2" is Solr's version number for the schema syntax and semantics.  It should
+         not normally be changed by applications.
+         1.0: multiValued attribute did not exist, all fields are multiValued by nature
+         1.1: multiValued attribute introduced, false by default
+         1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
+         1.3: removed optional field compress feature
+         2.0: translated to solr8
+    -->
+
+    <!-- ########################################################### -->
+    <!-- ##########  M B o o k s   F i e l d   T y p e s  ########## -->
+    <!-- ########################################################### -->
+
+
+    <!-- use this instead of mbooksOcrXpatLike.  Better handling of multilingual-->
+    <fieldType name="mbooksRegular" class="solr.TextField" positionIncrementGap="100">
+        <analyzer>
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory"/>
+        </analyzer>
+    </fieldType>
+
+    <!-- norms are omitted so short pages do not score higher than long pages with same number of matches -->
+    <fieldType name="FullText" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="false"
+               stored="true" termVectors="true" termPositions="true" termOffsets="true" omitNorms="true">
+        <analyzer>
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory"/>
+            <filter class="solr.CommonGramsFilterFactory" words="1000common.txt"/>
+        </analyzer>
+    </fieldType>
+
+
+    <!--################################## VuFind types #######################################-->
+    <!-- translated to Solr-->
+
+    <!-- XXX todo, see if we can do normalization, then wdf then folding as
+         wdf needs the caps! -->
+
+    <!-- Standard Text Field  with porter English stemming -->
+    <fieldtype name="text" class="solr.TextField" positionIncrementGap="100">
+        <analyzer type="index">
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory"/>
+            <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+                    catenateWords="1" catenateNumbers="1" catenateAll="0"/>
+            <filter class="solr.SnowballPorterFilterFactory" protected="protwords.txt"/>
+            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory"/>
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+            <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+                    catenateWords="0" catenateNumbers="0" catenateAll="0"/>
+            <filter class="solr.SnowballPorterFilterFactory" protected="protwords.txt"/>
+            <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+        </analyzer>
+    </fieldtype>
+
+
+    <!-- ################################################### -->
+    <!-- #            M B o o k s   F i e l d s            # -->
+    <!-- ################################################### -->
+
+    <field name="_version_" type="plong" indexed="false" stored="false"/>
+
+    <!-- mdp.390151234567890 -->
+
+    <!-- Volume ID field-->
+    <field name="vol_id" type="string" indexed="true" stored="true" multiValued="false" required="true"/>
+
+    <!-- new fields-->
+    <!-- hid replaced with id -->
+    <field name="id" type="string" indexed="true" stored="true" multiValued="false" required="true"/>
+
+    <!-- end new fields-->
+
+
+    <field name="seq" type="pint" indexed="true" stored="true" multiValued="false" required="true"/>
+    <field name="pgnum" type="string" indexed="true" stored="true" multiValued="false" required="false"/>
+    <field name="ocr" type="FullText" indexed="true" stored="true" multiValued="false" required="true"/>
+
+
+    <field name="title" type="mbooksRegular" indexed="true" stored="true" multiValued="true" required="true"/>
+    <field name="rights" type="pint" indexed="true" stored="true" multiValued="false" required="true"/>
+    <field name="author" type="mbooksRegular" indexed="true" stored="true" multiValued="true" required="false"/>
+    <field name="date" type="string" indexed="true" stored="true" multiValued="true" required="false"/>
+
+    <field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
+
+    <!-- ##################################################### -->
+    <!-- #         V u F i n d   F i e l d s                 # -->
+    <!-- ##################################################### -->
+    <!-- Core Fields  -->
+    <!-- VuFind id field mapped to record_no in processing -->
+    <field name="record_no" type="string" indexed="true" stored="true"/>
+
+
+    <!-- Dynamic field definitions.  If a field name is not found, dynamicFields
+         will be used if the name matches any of the patterns.
+         RESTRICTION: the glob-like pattern in the name attribute must have
+         a "*" only at the start or the end.
+         EXAMPLE:  name="*_i" will match any field ending in _i (like myid_i, z_i)
+         Longer patterns will be matched first.  if equal size patterns
+         both match, the first appearing in the schema will be used.  -->
+
+    <!-- Mbooks dynamic field-->
+    <dynamicField name="*_ft" type="FullText" indexed="true" stored="true"/>
+
+    <dynamicField name="*_i" type="pint" indexed="true" stored="true"/>
+    <dynamicField name="*_s" type="string" indexed="true" stored="true"/>
+    <dynamicField name="*_l" type="plong" indexed="true" stored="true"/>
+    <dynamicField name="*_t" type="text" indexed="true" stored="true"/>
+    <dynamicField name="*_b" type="boolean" indexed="true" stored="true"/>
+    <dynamicField name="*_f" type="pfloat" indexed="true" stored="true"/>
+    <dynamicField name="*_d" type="pdouble" indexed="true" stored="true"/>
+
+    <dynamicField name="*_dt" type="pdate" indexed="true" stored="true"/>
+
+
+    <!-- some trie-coded dynamic fields for faster range queries -->
+    <dynamicField name="*_ti" type="pint" indexed="true" stored="true"/>
+    <dynamicField name="*_tl" type="plong" indexed="true" stored="true"/>
+    <dynamicField name="*_tf" type="pfloat" indexed="true" stored="true"/>
+    <dynamicField name="*_td" type="pdouble" indexed="true" stored="true"/>
+    <dynamicField name="*_tdt" type="pdate" indexed="true" stored="true"/>
+
+    <dynamicField name="ignored_*" type="ignored" multiValued="true"/>
+
+
+
+
+    <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+    <fieldType name="strings" class="solr.StrField" sortMissingLast="true" multiValued="true" docValues="true" />
+
+    <!-- boolean type: "true" or "false" -->
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+    <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+    <!--
+      Numeric field types that index values using KD-trees.
+      Point fields don't support FieldCache, so they must have docValues="true" if needed for sorting, faceting, functions, etc.
+    -->
+    <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+    <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+    <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+    <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+
+    <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+    <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+    <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+
+
+    <fieldType name="random" class="solr.RandomSortField" indexed="true"/>
+
+    <!-- since fields of this type are by default not stored or indexed,
+       any data added to them will be ignored outright.  -->
+    <fieldType name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
+
+    <!-- KD-tree versions of date fields -->
+    <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+    <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+
+    <!--Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+    <fieldType name="binary" class="solr.BinaryField"/>
+
+
+
+    <!-- uncomment the following to ignore any fields that don't already match an existing
+         field name or dynamic field, rather than reporting them as an error.
+         alternately, change the type="ignored" to some other type e.g. "text" if you want
+         unknown fields indexed and/or stored by default -->
+    <!--dynamicField name="*" type="ignored" multiValued="true" /-->
+
+
+    <!-- Field to use to determine and enforce document uniqueness.
+         Unless this field is marked with required="false", it will be a required field
+    -->
+    <!--  changed from hid to id-->
+    <uniqueKey>id</uniqueKey>
+
+    <!-- field for the QueryParser to use when an explicit fieldname is absent -->
+<!--    <defaultSearchField>ocr</defaultSearchField>-->
+
+    <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
+<!--    <solrQueryParser defaultOperator="OR"/>-->
+
+</schema>
