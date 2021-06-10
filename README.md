@@ -2,6 +2,8 @@
 
 Pretty straightforward solr configuration used for ptsearch.
 
+See branch solr-tomcat for the pre-solr8 configuration.
+
 ## Always use wt=xml
 
 The cilent code expects XML responses; thus in the solr8 branch the search handler needs to have
