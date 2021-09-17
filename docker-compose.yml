@@ -6,3 +6,9 @@ services:
     build: .
     ports:
       - "8983:8983"
+
+  test:
+    image: curlimages/curl
+    depends_on:
+      - solr
+    command: curl --retry-connrefused --retry 5 --retry-delay 5 --fail-with-body 'http://solr:8983/solr/ptsearch/admin/ping'
