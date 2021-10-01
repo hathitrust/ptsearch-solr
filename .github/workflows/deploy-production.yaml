@@ -17,7 +17,7 @@ jobs:
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ env.GITHUB_REPOSITORY }}:${{ github.event.inputs.tag }}
+        image: ${{ github.repository }}:${{ github.event.inputs.tag }}
         cluster_ca: ${{ secrets.KUBERNETES_CA }}
         cluster_server: ${{ secrets.KUBERNETES_SERVER }}
         namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
@@ -31,7 +31,7 @@ jobs:
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ env.GITHUB_REPOSITORY }}:${{ github.event.inputs.tag }}
+        image: ${{ github.repository }}:${{ github.event.inputs.tag }}
         cluster_ca: ${{ secrets.KUBERNETES_CA }}
         cluster_server: ${{ secrets.KUBERNETES_SERVER }}
         namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
