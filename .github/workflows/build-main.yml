@@ -40,7 +40,7 @@ jobs:
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ GITHUB_REPOSTIORY }}-unstable:${{ github.sha }}
+        image: ${{ env.GITHUB_REPOSITORY }}-unstable:${{ github.sha }}
         cluster_ca: ${{ secrets.KUBERNETES_CA }}
         cluster_server: ${{ secrets.KUBERNETES_SERVER }}
         namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
