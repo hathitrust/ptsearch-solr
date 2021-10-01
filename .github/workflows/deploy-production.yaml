@@ -1,0 +1,38 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release
+        required: true
+
+jobs:
+  deploy-macc:
+    runs-on: ubuntu-latest
+    environment: production-macc
+    steps:
+    - name: Deploy to Production (MACC)
+      uses: mlibrary/deploy-to-kubernetes@v1
+      with:
+        github_username: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        image: hathitrust/ptsearch-solr:${{ github.event.inputs.tag }}
+        cluster_ca: ${{ secrets.KUBERNETES_CA }}
+        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
+        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}
+  deploy-ictc:
+    runs-on: ubuntu-latest
+    environment: production-ictc
+    steps:
+    - name: Deploy to Production (ICTC)
+      uses: mlibrary/deploy-to-kubernetes@v1
+      with:
+        github_username: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        image: hathitrust/ptsearch-solr:${{ github.event.inputs.tag }}
+        cluster_ca: ${{ secrets.KUBERNETES_CA }}
+        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
+        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}
