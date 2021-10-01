@@ -7,7 +7,7 @@ on:
     types: [ completed ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -28,9 +28,35 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: 'ghcr.io/hathitrust/ptsearch-solr-unstable:${{ github.sha }}, ghcr.io/hathitrust/ptsearch-solr-unstable:latest'
+          tags: 'ghcr.io/${{ GITHUB_REPOSITORY }}-unstable:${{ github.sha }}, ghcr.io/${{ GITHUB_REPOSITORY }}:latest'
           file: Dockerfile
 
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+  deploy-testing:
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+    - name: Deploy to Testing
+      uses: mlibrary/deploy-to-kubernetes@v1
+      with:
+        github_username: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        image: ${{ GITHUB_REPOSTIORY }}-unstable:${{ github.sha }}
+        cluster_ca: ${{ secrets.KUBERNETES_CA }}
+        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
+        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}
 
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+    - name: Deploy to Staging
+      uses: mlibrary/deploy-to-kubernetes@v1
+      with:
+        github_username: ${{ github.actor }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        image: ${{ GITHUB_REPOSITORY }}-unstable:${{ github.sha }}
+        cluster_ca: ${{ secrets.KUBERNETES_CA }}
+        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
+        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
+        namespace: ${{ secrets.NAMESPACE }}

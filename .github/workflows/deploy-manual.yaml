@@ -42,7 +42,7 @@ jobs:
     - name: Check that the tag exists in container registry
       id: image_check
       run: |
-        if docker manifest inspect ghcr.io/hathitrust/${{ secrets.IMAGE_NAME }}:${{ steps.tag_check.outputs.tag }} > /dev/null; then
+        if docker manifest inspect ghcr.io/${{ GITHUB_REPOSITORY }}-unstable:${{ steps.tag_check.outputs.tag }} > /dev/null; then
           echo '::set-output name=image_exists::true'
           echo "image exists!"
         else
@@ -60,13 +60,13 @@ jobs:
         context: .
         file: Dockerfile.prod
         push: true
-        tags: ghcr.io/hathitrust/${{ secrets.IMAGE_NAME }}:${{steps.tag_check.outputs.tag}}
+        tags: ghcr.io/${{ GITHUB_REPOSITORY }}-unstable:${{steps.tag_check.outputs.tag}}
     - name: Deploy to ${{ github.event.inputs.environment }}
       uses: mlibrary/deploy-to-kubernetes@v1
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: hathitrust/ptsearch-solr-unstable:${{ github.event.inputs.tag }}
+        image: ${{ GITHUB_REPOSITORY }}-unstable:${{ github.event.inputs.tag }}
         cluster_ca: ${{ secrets.KUBERNETES_CA }}
         cluster_server: ${{ secrets.KUBERNETES_SERVER }}
         namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
