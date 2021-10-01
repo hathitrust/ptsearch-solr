@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: 'ghcr.io/${{ GITHUB_REPOSITORY }}-unstable:${{ github.sha }}, ghcr.io/${{ GITHUB_REPOSITORY }}:latest'
+          tags: 'ghcr.io/${{ env.GITHUB_REPOSITORY }}-unstable:${{ github.sha }}, ghcr.io/${{ env.GITHUB_REPOSITORY }}:latest'
           file: Dockerfile
 
   deploy-testing:
@@ -55,7 +55,7 @@ jobs:
       with:
         github_username: ${{ github.actor }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ GITHUB_REPOSITORY }}-unstable:${{ github.sha }}
+        image: ${{ env.GITHUB_REPOSITORY }}-unstable:${{ github.sha }}
         cluster_ca: ${{ secrets.KUBERNETES_CA }}
         cluster_server: ${{ secrets.KUBERNETES_SERVER }}
         namespace_token: ${{ secrets.KUBERNETES_TOKEN }}

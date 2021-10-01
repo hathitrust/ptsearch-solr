@@ -24,8 +24,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Tag latest release in Github Container Registry
       env: 
-        UNSTABLE_IMAGE_ID: ghcr.io/${{ GITHUB_REPOSITORY }}-unstable
-        PROD_IMAGE_ID: ghcr.io/${{ GITHUB_REPOSITORY }}
+        UNSTABLE_IMAGE_ID: ghcr.io/${{ env.GITHUB_REPOSITORY }}-unstable
+        PROD_IMAGE_ID: ghcr.io/${{ env.GITHUB_REPOSITORY }}
       run: |
         docker pull $UNSTABLE_IMAGE_ID:${{ github.sha }}
         docker tag $UNSTABLE_IMAGE_ID:${{ github.sha }} $PROD_IMAGE_ID:${{ env.TAG }}
