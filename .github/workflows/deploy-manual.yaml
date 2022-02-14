@@ -58,7 +58,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: Dockerfile.prod
+        file: Dockerfile
         push: true
         tags: ghcr.io/${{ github.repository }}-unstable:${{steps.tag_check.outputs.tag}}
     - name: Deploy to ${{ github.event.inputs.environment }}
