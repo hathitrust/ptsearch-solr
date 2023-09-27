@@ -31,34 +31,6 @@ jobs:
           tags: 'ghcr.io/${{ github.repository }}-unstable:${{ github.sha }}, ghcr.io/${{ github.repository }}-unstable:latest'
           file: Dockerfile
 
-  deploy-testing:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: testing
-    steps:
-    - name: Deploy to Testing
-      uses: mlibrary/deploy-to-kubernetes@v1
-      with:
-        github_username: ${{ github.actor }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ github.repository }}-unstable:${{ github.sha }}
-        cluster_ca: ${{ secrets.KUBERNETES_CA }}
-        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
-        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
-        namespace: ${{ secrets.NAMESPACE }}
-
-  deploy-staging:
-    needs: build
-    runs-on: ubuntu-latest
-    environment: staging
-    steps:
-    - name: Deploy to Staging
-      uses: mlibrary/deploy-to-kubernetes@v1
-      with:
-        github_username: ${{ github.actor }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        image: ${{ github.repository }}-unstable:${{ github.sha }}
-        cluster_ca: ${{ secrets.KUBERNETES_CA }}
-        cluster_server: ${{ secrets.KUBERNETES_SERVER }}
-        namespace_token: ${{ secrets.KUBERNETES_TOKEN }}
-        namespace: ${{ secrets.NAMESPACE }}
+    # TODO: automate deployment w/ argocd
+    # for now - update image in
+    # https://github.com/hathitrust/ht_tanka/blob/main/environments/ptsearch
