@@ -1,11 +1,6 @@
 name: Build
 
 on:
-    workflow_run:
-        workflows: ['Run Tests']
-        branches: ['main']
-        types: [completed]
-
     workflow_dispatch:
         inputs:
             img_tag:
@@ -40,17 +35,12 @@ jobs:
 
         steps:
             - name: Build Image
-              uses: hathitrust/github_actions/build@v1.4.0
+              uses: hathitrust/github_actions/build@v1
               with:
-                image: ghcr.io/${{ github.repository }}-unstable
+                image: ghcr.io/${{ github.repository }}
                 dockerfile: Dockerfile
                 img_tag: ${{ inputs.img_tag }}
                 tag: ${{ inputs.ref }}
                 push_latest: ${{ inputs.push_latest}}
                 registry_token: ${{ github.token }}
                 rebuild: ${{ inputs.rebuild }}
-
-
-    # TODO: automate deployment w/ argocd
-    # for now - update image in
-    # https://github.com/hathitrust/ht_tanka/blob/main/environments/ptsearch
