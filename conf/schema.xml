@@ -47,7 +47,7 @@
         <analyzer type="index">
             <tokenizer class="solr.ICUTokenizerFactory"/>
             <filter class="solr.ICUFoldingFilterFactory"/>
-            <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+            <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1"
                     catenateWords="1" catenateNumbers="1" catenateAll="0"/>
             <filter class="solr.SnowballPorterFilterFactory"/>
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
@@ -55,7 +55,7 @@
         <analyzer type="query">
             <tokenizer class="solr.ICUTokenizerFactory"/>
             <filter class="solr.ICUFoldingFilterFactory"/>
-            <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+            <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1"
                     catenateWords="0" catenateNumbers="0" catenateAll="0"/>
             <filter class="solr.SnowballPorterFilterFactory"/>
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
