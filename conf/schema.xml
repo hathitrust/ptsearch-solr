@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<schema name="no_hid_schema based on 3.3 schema solr8" version="2.0">
+<schema name="no_hid_schema solr9" version="2.0">
     <!-- attribute "name" is the name of this schema and is only used for display purposes.
          Applications should change this to reflect the nature of the search collection.
          version="1.2" is Solr's version number for the schema syntax and semantics.  It should
@@ -9,7 +9,7 @@
          1.1: multiValued attribute introduced, false by default
          1.2: omitTermFreqAndPositions attribute introduced, true by default except for text fields.
          1.3: removed optional field compress feature
-         2.0: translated to solr8
+         2.0: translated to solr9
     -->
 
     <!-- ########################################################### -->
@@ -26,7 +26,7 @@
     </fieldType>
 
     <!-- norms are omitted so short pages do not score higher than long pages with same number of matches -->
-    <fieldType name="FullText" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="false"
+    <fieldType name="FullText" class="solr.TextField" positionIncrementGap="100"
                stored="true" termVectors="true" termPositions="true" termOffsets="true" omitNorms="true">
         <analyzer>
             <tokenizer class="solr.ICUTokenizerFactory"/>
@@ -43,7 +43,7 @@
          wdf needs the caps! -->
 
     <!-- Standard Text Field  with porter English stemming -->
-    <fieldtype name="text" class="solr.TextField" positionIncrementGap="100">
+    <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
         <analyzer type="index">
             <tokenizer class="solr.ICUTokenizerFactory"/>
             <filter class="solr.ICUFoldingFilterFactory"/>
@@ -60,7 +60,7 @@
             <filter class="solr.SnowballPorterFilterFactory"/>
             <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
         </analyzer>
-    </fieldtype>
+    </fieldType>
 
 
     <!-- ################################################### -->

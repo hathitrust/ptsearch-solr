@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   solr:
@@ -8,6 +6,7 @@ services:
       - "8983:8983"
     environment:
       SOLR_MODULES: analysis-extras
+    command: solr-foreground --user-managed
 
   test:
     image: curlimages/curl
