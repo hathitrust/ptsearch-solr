@@ -79,7 +79,7 @@
 
   <!-- Solr 10 default to ManagedIndexSchemaFactory, that means convert schema.xml to managed-schema.xml
    on the first startup. In our case, we want to keep using the classic schema.xml, so we specify the factory here
-   avoinding the conversion and suppressing the warning message in the logs.
+   avoiding the conversion and suppressing the warning message in the logs.
    -->
   <schemaFactory class="ClassicIndexSchemaFactory"/>
 
@@ -91,60 +91,6 @@
        Note: This replaces <indexDefaults> and <mainIndex> from older versions
        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <indexConfig>
-    <!-- maxFieldLength was removed in 4.0. To get similar behavior, include a
-         LimitTokenCountFilterFactory in your fieldType definition. E.g.
-     <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="10000"/>
-    -->
-    <!-- Maximum time to wait for a write lock (ms) for an IndexWriter. Default: 1000 -->
-    <!-- <writeLockTimeout>1000</writeLockTimeout>  -->
-
-    <!-- Expert: Enabling compound file will use less files for the index,
-         using fewer file descriptors on the expense of performance decrease.
-         Default in Lucene is "true". Default in Solr is "false" (since 3.6) -->
-    <!-- <useCompoundFile>false</useCompoundFile> -->
-
-    <!-- ramBufferSizeMB sets the amount of RAM that may be used by Lucene
-         indexing for buffering added documents and deletions before they are
-         flushed to the Directory.
-         maxBufferedDocs sets a limit on the number of documents buffered
-         before flushing.
-         If both ramBufferSizeMB and maxBufferedDocs is set, then
-         Lucene will flush based on whichever limit is hit first.  -->
-    <!-- <ramBufferSizeMB>100</ramBufferSizeMB> -->
-    <!-- <maxBufferedDocs>1000</maxBufferedDocs> -->
-
-    <!-- Expert: ramPerThreadHardLimitMB sets the maximum amount of RAM that can be consumed
-         per thread before they are flushed. When limit is exceeded, this triggers a forced
-         flush even if ramBufferSizeMB has not been exceeded.
-         This is a safety limit to prevent Lucene's DocumentsWriterPerThread from address space
-         exhaustion due to its internal 32 bit signed integer based memory addressing.
-         The specified value should be greater than 0 and less than 2048MB. When not specified,
-         Solr uses Lucene's default value 1945. -->
-    <!-- <ramPerThreadHardLimitMB>1945</ramPerThreadHardLimitMB> -->
-
-    <!-- Expert: Merge Policy
-         The Merge Policy in Lucene controls how merging of segments is done.
-         The default since Solr/Lucene 3.3 is TieredMergePolicy.
-         The default since Lucene 2.3 was the LogByteSizeMergePolicy,
-         Even older versions of Lucene used LogDocMergePolicy.
-      -->
-    <!--
-        <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
-          <int name="maxMergeAtOnce">10</int>
-          <int name="segmentsPerTier">10</int>
-          <double name="noCFSRatio">0.1</double>
-        </mergePolicyFactory>
-      -->
-
-    <!-- Expert: Merge Scheduler
-         The Merge Scheduler in Lucene controls how merges are
-         performed.  The ConcurrentMergeScheduler (Lucene 2.3 default)
-         can perform merges in the background using separate threads.
-         The SerialMergeScheduler (Lucene 2.2 default) does not.
-     -->
-    <!--
-       <mergeScheduler class="org.apache.lucene.index.ConcurrentMergeScheduler"/>
-       -->
 
     <!-- LockFactory
 
@@ -166,36 +112,6 @@
          https://cwiki.apache.org/confluence/display/lucene/AvailableLockFactories
     -->
     <lockType>${solr.lock.type:native}</lockType>
-
-    <!-- Commit Deletion Policy
-         Custom deletion policies can be specified here. The class must
-         implement org.apache.lucene.index.IndexDeletionPolicy.
-
-         The default Solr IndexDeletionPolicy implementation supports
-         deleting index commit points on number of commits, age of
-         commit point and optimized status.
-
-         The latest commit point should always be preserved regardless
-         of the criteria.
-    -->
-    <!--
-    <deletionPolicy class="solr.SolrDeletionPolicy">
-    -->
-    <!-- The number of commit points to be kept -->
-    <!-- <str name="maxCommitsToKeep">1</str> -->
-    <!-- The number of optimized commit points to be kept -->
-    <!-- <str name="maxOptimizedCommitsToKeep">0</str> -->
-    <!--
-        Delete all commit points once they have reached the given age.
-        Supports DateMathParser syntax e.g.
-      -->
-    <!--
-       <str name="maxCommitAge">30MINUTES</str>
-       <str name="maxCommitAge">1DAY</str>
-    -->
-    <!--
-    </deletionPolicy>
-    -->
 
     <!-- Lucene Infostream
 
@@ -258,44 +174,7 @@
       <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
     </autoSoftCommit>
 
-    <!-- Update Related Event Listeners
-
-         Various IndexWriter related events can trigger Listeners to
-         take actions.
-
-         postCommit - fired after every commit or optimize command
-         postOptimize - fired after every optimize command
-      -->
-
   </updateHandler>
-
-  <!-- IndexReaderFactory
-
-       Use the following format to specify a custom IndexReaderFactory,
-       which allows for alternate IndexReader implementations.
-
-       ** Experimental Feature **
-
-       Please note - Using a custom IndexReaderFactory may prevent
-       certain other features from working. The API to
-       IndexReaderFactory may change without warning or may even be
-       removed from future releases if the problems cannot be
-       resolved.
-
-
-       ** Features that may not work with custom IndexReaderFactory **
-
-       The ReplicationHandler assumes a disk-resident index. Using a
-       custom IndexReader implementation may cause incompatibility
-       with ReplicationHandler and may cause replication to not work
-       correctly. See SOLR-1366 for details.
-
-    -->
-  <!--
-  <indexReaderFactory name="IndexReaderFactory" class="package.class">
-    <str name="someArg">Some Value</str>
-  </indexReaderFactory >
-  -->
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
        Query section - these settings control query time things like caches
@@ -430,23 +309,6 @@
     -->
     <enableLazyFieldLoading>true</enableLazyFieldLoading>
 
-    <!-- Use Filter For Sorted Query
-
-         A possible optimization that attempts to use a filter to
-         satisfy a search.  If the requested sort does not include
-         score, then the filterCache will be checked for a filter
-         matching the query. If found, the filter will be used as the
-         source of document ids, and then the sort will be applied to
-         that.
-
-         For most situations, this will not be useful unless you
-         frequently get the same search repeatedly with different sort
-         options, and none of them ever use "score"
-      -->
-    <!--
-       <useFilterForSortedQuery>true</useFilterForSortedQuery>
-      -->
-
     <!-- Result Window Size
 
          An optimization for use with the queryResultCache.  When a search
@@ -509,6 +371,20 @@
       -->
     <useColdSearcher>false</useColdSearcher>
 
+    <!-- Valid in Solr 10 but it is candidate to remove
+     We use the default value in Solr and this setting is most relevant for SolrCloud replicas or systems with heavy indexing load.
+     -->
+    <!-- Max Warming Searchers
+
+         Maximum number of searchers that may be warming in the
+         background concurrently.  An error is returned if this limit
+         is exceeded.
+
+         Recommend values of 1-2 for read-only slaves, higher for
+         masters w/o cache warming.
+      -->
+    <maxWarmingSearchers>2</maxWarmingSearchers>
+
   </query>
 
   <!-- Request Dispatcher
@@ -543,52 +419,9 @@
          The options below instruct Solr not to output any HTTP Caching
          related headers
       -->
-    <httpCaching never304="true" />
-    <!-- If you include a <cacheControl> directive, it will be used to
-         generate a Cache-Control header (as well as an Expires header
-         if the value contains "max-age=")
-
-         By default, no Cache-Control header is generated.
-
-         You can use the <cacheControl> option even if you have set
-         never304="true"
-      -->
-    <!--
-       <httpCaching never304="true" >
-         <cacheControl>max-age=30, public</cacheControl>
-       </httpCaching>
-      -->
-    <!-- To enable Solr to respond with automatically generated HTTP
-         Caching headers, and to response to Cache Validation requests
-         correctly, set the value of never304="false"
-
-         This will cause Solr to generate Last-Modified and ETag
-         headers based on the properties of the Index.
-
-         The following options can also be specified to affect the
-         values of these headers...
-
-         lastModFrom - the default value is "openTime" which means the
-         Last-Modified value (and validation against If-Modified-Since
-         requests) will all be relative to when the current Searcher
-         was opened.  You can change it to lastModFrom="dirLastMod" if
-         you want the value to exactly correspond to when the physical
-         index was last modified.
-
-         etagSeed="..." is an option you can change to force the ETag
-         header (and validation against If-None-Match requests) to be
-         different even if the index has not changed (ie: when making
-         significant changes to your config file)
-
-         (lastModifiedFrom and etagSeed are both ignored if you use
-         the never304="true" option)
-      -->
-    <!--
-       <httpCaching lastModifiedFrom="openTime"
-                    etagSeed="Solr">
-         <cacheControl>max-age=30, public</cacheControl>
-       </httpCaching>
-      -->
+    <!-- <httpCaching never304="true" /> -->
+    <httpCaching lastModifiedFrom="openTime"
+                 etagSeed="Solr"/>
   </requestDispatcher>
 
   <!-- Request Handlers
@@ -608,6 +441,8 @@
     -->
 
   <!-- Primary search handler, expected by most clients, examples and UI frameworks -->
+  <!-- replaced name="standard" by name="/select". The declaration <requestHandler name="standard"
+  class="solr.SearchHandler"> is removed and no longer supported in modern Solr -->
   <requestHandler name="/select" class="solr.SearchHandler">
     <lst name="defaults">
       <str name="echoParams">all</str>
@@ -631,21 +466,68 @@
     </lst>
   </requestHandler>
 
+  <requestHandler name="/edismax" class="solr.SearchHandler">
+    <lst name="defaults">
+      <str name="defType">edismax</str>
+      <str name="echoParams">all</str>
+      <float name="tie">0.01</float>
+      <bool name="lowercaseOperators">false</bool>
+      <bool name="sow">false</bool>
+      <!-- added for solr 10 -->
+      <str name="df">ocr</str>
+    </lst>
+  </requestHandler>
+
+  <requestHandler name="/dismax" class="solr.SearchHandler">
+    <lst name="defaults">
+      <str name="defType">dismax</str>
+      <str name="echoParams">all</str>
+      <float name="tie">0.01</float>
+      <!-- added for solr 10 -->
+      <str name="df">ocr</str>
+    </lst>
+  </requestHandler>
+
+
+  <!-- blacklight document handler -->
+
+  <requestHandler name="/document" class="solr.SearchHandler">
+    <lst name="defaults">
+      <str name="echoParams">all</str>
+      <str name="fl">*</str>
+      <str name="rows">1</str>
+      <str name="q">{!term f=id v=$id}</str> <!-- use id=666 instead of q=id:666 -->
+    </lst>
+  </requestHandler>
+
   <!-- A request handler that returns indented JSON by default -->
   <requestHandler name="/query" class="solr.SearchHandler">
     <lst name="defaults">
       <str name="echoParams">explicit</str>
       <str name="wt">json</str>
       <str name="indent">true</str>
+      <!-- added for solr 10  -->
+      <str name="df">ocr</str>
     </lst>
   </requestHandler>
 
   <!-- Shared parameters for multiple Request Handlers -->
-  <initParams path="/update/**,/query,/select,/spell">
+  <!-- Replace the Solr _text_ field to ocr that is our primary full-text. If we keep _text_ Solr would fail silently-->
+  <initParams path="/update/**,/query,/select,/tvrh,/elevate,/spell">
     <lst name="defaults">
-      <str name="df">_text_</str>
+      <str name="df">ocr</str>
     </lst>
   </initParams>
+
+  <!-- Echo the request contents back to the client -->
+  <!-- Keep it for previous Solr and valid for Solr 10-->
+  <!-- This is useful for debugging to see how the request was parsed and what parameters were used. -->
+  <requestHandler name="/debug/dump" class="solr.DumpRequestHandler">
+    <lst name="defaults">
+      <str name="echoParams">explicit</str>
+      <str name="echoHandler">true</str>
+    </lst>
+  </requestHandler>
 
   <!-- Spell Check
 
@@ -666,7 +548,7 @@
     <!-- a spellchecker built from a field of the main index -->
     <lst name="spellchecker">
       <str name="name">default</str>
-      <str name="field">_text_</str>
+      <str name="field">ocr</str>
       <str name="classname">solr.DirectSolrSpellChecker</str>
       <!-- the spellcheck distance measure used, the default is the internal levenshtein -->
       <str name="distanceMeasure">internal</str>
@@ -699,6 +581,26 @@
     </lst>
     -->
   </searchComponent>
+
+  <!-- Terms Component
+
+       http://wiki.apache.org/solr/TermsComponent
+
+       A component to return terms and document frequency of those
+       terms
+    -->
+  <searchComponent name="terms" class="solr.TermsComponent"/>
+
+  <!-- A request handler for demonstrating the terms component -->
+  <requestHandler name="/terms" class="solr.SearchHandler" startup="lazy">
+    <lst name="defaults">
+      <bool name="terms">true</bool>
+      <bool name="distrib">false</bool>
+    </lst>
+    <arr name="components">
+      <str>terms</str>
+    </arr>
+  </requestHandler>
 
   <!-- A request handler for demonstrating the spellcheck component.
 

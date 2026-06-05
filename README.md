@@ -36,7 +36,7 @@ curl -X POST 'http://localhost:8983/solr/ptsearch/update?commit=true' \
 ### Check if the highlights are specific in ocr field
 
 ```
-curl 'http://localhost:8983/solr/ptsearch/select?q=hello&hl=true&hl.fl=ocr' | jq .
+curl 'http://localhost:8983/solr/ptsearch/select?q=hello&hl=true&hl.fl=ocr'
 ```
 
 The output should be something like this, where the `ocr` field contains the highlighted text with the expected tags:
