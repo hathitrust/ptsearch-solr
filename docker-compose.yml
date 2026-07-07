@@ -6,6 +6,8 @@ services:
       - "8983:8983"
     environment:
       SOLR_MODULES: analysis-extras
+      SOLR_OPTS: -Dlog4j2.disable.jmx=true
+      LOG4J_PROPS: /opt/solr/server/resources/log4j2-console.xml
     command: solr-foreground --user-managed
 
   test:
