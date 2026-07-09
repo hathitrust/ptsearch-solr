@@ -12,5 +12,5 @@ jobs:
         with:
           registry_token: ${{ github.token }}
           existing_tag: ghcr.io/${{ github.repository }}:${{ github.sha }}
-          image: ghcr.io/hathitrust/${{ github.repository }}
+          image: ghcr.io/${{ github.repository }}
           new_tag: ${{ github.event.release.tag_name }}
